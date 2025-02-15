@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import { nanoid } from 'nanoid';
+import ContactForm from './components/ContactForm/ContactForm';
+import SearchBox from './components/SearchBox/SearchBox';
+import ContactList from './components/ContactList/ContactList';
+import contactsData from './contacts.json';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = localStorage.getItem('contacts');
+    return savedContacts ? JSON.parse(savedContacts) : contactsData;
+  });
+  const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
+  const filteredContacts = contacts.filter(contact =>
+    contact.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+  );
+
+  const addContact = (name, number) => {
+    const newContact = { id: nanoid(), name, number };
+    setContacts(prevContacts => [...prevContacts, newContact]);
+  };
+
+  const deleteContact = id => {
+    setContacts(prevContact => prevContact.filter(contact => contact.id != id));
+  };
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Phonebook</h1>
+        <ContactForm onAddContact={addContact} />
+        <SearchBox filter={filter} setFilter={setFilter} />
+        <ContactList
+          contacts={filteredContacts}
+          onDeleteContact={deleteContact}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

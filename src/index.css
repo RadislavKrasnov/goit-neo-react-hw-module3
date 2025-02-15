@@ -23,11 +23,7 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  margin: 0 16px;
 }
 
 h1 {
@@ -54,9 +50,14 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+input[type='text'] {
+  line-height: 1.5;
+  outline: none;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #000;
     background-color: #ffffff;
   }
   a:hover {
